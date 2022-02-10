@@ -1,12 +1,8 @@
 #!/bin/bash
-network=$1
-dns=$2
-echo "DNS resolution for $1"
+hostfile=$1
+portfile=$2
+echo "host,port"
 for host in $(seq 1 254); do
-    lookup=$(timeout .1 nslookup "$network.$host" "$dns")
-      if [[ $? -eq 0 ]]
-      then
-       echo "$lookup"
-      fi
-
+    timeout .1 bash -c "echo >/dev/tcp/$hostfile.$host/$portfile" 2>/dev/null &&
+      echo "$hostfile.$host,$portfile"
 done
